@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:image_search_app/data/photo_provider.dart';
 import 'package:image_search_app/model/photo.dart';
+import 'package:image_search_app/ui/home_view_model.dart';
 import 'package:image_search_app/ui/widget/photo_widget.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = PhotoProvider.of(context).homeViewModel;
+    final viewModel = context.watch<HomeViewModel>();
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
@@ -44,30 +45,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(16)))),
             )),
-        StreamBuilder<List<Photo>>(
-            stream: viewModel.photoStream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const CircularProgressIndicator();
-              }
-              final photos = snapshot.data!;
-
-              return Expanded(
-                child: GridView.builder(
-                    itemCount: photos.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16),
-                    itemBuilder: (context, index) {
-                      final photo = photos[index];
-                      return PhotoWidget(
-                        photo: photo,
-                      );
-                    }),
-              );
-            })
+        Expanded(
+          child: GridView.builder(
+              itemCount: viewModel.photos.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, crossAxisSpacing: 16, mainAxisSpacing: 16),
+              itemBuilder: (context, index) {
+                final photo = viewModel.photos[index];
+                return PhotoWidget(
+                  photo: photo,
+                );
+              }),
+        )
       ]),
     );
   }

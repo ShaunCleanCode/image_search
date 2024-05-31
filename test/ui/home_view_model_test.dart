@@ -10,7 +10,7 @@ void main() {
     viewModel.fetch('apple');
     viewModel.fetch('apple');
 
-    expect(viewModel.photoStream,
+    expect(viewModel.photos,
         emitsInOrder([isA<List<Photo>>(), isA<List<Photo>>()]));
   });
 }
